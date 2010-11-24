@@ -53,12 +53,12 @@ class OAuth {
 
     static function get_apps() {
         $ret = array('app_name_1' =>
-                     array('okey' => '<CHANGE THIS>',
+                     array('okey' => '<CHANGE THIS (CAN BE EMPTY)>',
                            'uris_rx' => array('#^customappurl://#',
                                               '#^http://www[.]example[.]com(/|$)#')),
                      
                      'app_name_2' =>
-                     array('okey' => '<CHANGE THIS>',
+                     array('okey' => '<CHANGE THIS (CAN BE EMPTY)>',
                            'uris_rx' => array('#^http://www[.]example[.]net(/|$)#')),                     
                      );
         }

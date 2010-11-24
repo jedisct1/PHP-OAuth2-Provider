@@ -193,9 +193,6 @@ class ApiMOAuthHelper {
         if (empty($client_id)) {
             return array('error' => 'incorrect_client_credentials');
         }
-        if (empty($client_secret)) {
-            return array('error' => 'incorrect_client_credentials');
-        }
         try {
             $wanted_client_secret = OAuth::get_client_secret($client_id);
             if (Utils::secure_strings_are_equal($wanted_client_secret, $client_secret) !== TRUE) {
