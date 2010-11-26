@@ -184,11 +184,10 @@ class Route {
             if (MAGIC_QUOTES_ALREADY_DISABLED === FALSE &&
                 get_magic_quotes_gpc()) {
                 $_POST[$var] = addslashes(@urldecode($value));
-                $_REQUEST[$var] = $_POST[$var];
             } else {
                 $_POST[$var] = @urldecode($value);
-                $_REQUEST[$var] = $_POST[$var];
             }
+            $_REQUEST[$var] = $_POST[$var];            
         }
     }
 
@@ -196,22 +195,53 @@ class Route {
         if (strcasecmp($_SERVER['REQUEST_METHOD'], 'PUT') !== 0 ||
             ($content_type = @$_SERVER['CONTENT_TYPE']) === '' ||
             @$_SERVER['CONTENT_LENGTH'] <= 0) {
-            return;
+            return FALSE;
         }
         $matches = array();
         if (preg_match('~/x-www-form-urlencoded~',
                        $content_type, $matches) > 0) {
             self::_handle_put_data_urlencoded();
-            return;
+            return TRUE;
         }
         if (preg_match('~^multipart/form-data;\s*boundary=(.+)$~',
                        $content_type, $matches) <= 0 ||
             ($boundary = $matches[1]) === '') {
-            return;
+            return TRUE;
         }
         self::_handle_put_data_multipart($boundary);
+        
+        return TRUE;
     }
 
+    static function _handle_json_encoded_data() {
+        if (empty($_SERVER['CONTENT_TYPE'])) {
+            return FALSE;
+        }
+        $content_type = (string) $_SERVER['CONTENT_TYPE'];
+        if (preg_match('~/json$~', $content_type) <= 0) {
+            return FALSE;
+        }
+        $json_data = file_get_contents("php://input");
+        if (empty($json_data)) {
+            return TRUE;
+        }
+        $obj_data = @json_decode($json_data);
+        if (empty($obj_data)) {
+            return TRUE;
+        }
+        $data = (array) $obj_data;
+        foreach ($data as $var => $value) {
+            if (MAGIC_QUOTES_ALREADY_DISABLED === FALSE &&
+                get_magic_quotes_gpc()) {
+                $_POST[$var] = addslashes($value);
+            } else {
+                $_POST[$var] = $value;
+            }
+            $_REQUEST[$var] = $_POST[$var];        
+        }
+        return TRUE;
+    }
+    
     static function _output($content_type, $encoded_content) {
         header('Content-Type: ' . $content_type . '; charset=utf-8');
         header('Content-Length: ' . strlen($encoded_content));
@@ -367,8 +397,8 @@ class Route {
             fatal();
         }
         return trim($value_);
-    }
-
+    }    
+    
     static function run() {
         if (empty($_SERVER['HTTP_HOST'])) {
             die("\\o/\n");
@@ -384,7 +414,9 @@ class Route {
             @header('HTTP/1.0 404 Not Found');
             die('<h1>404 - Introuvable.</h1>' . "\n");
         }
-        self::_handle_put_data();
+        if (self::_handle_json_encoded_data() === FALSE) {
+            self::_handle_put_data();
+        }
         self::_init_params();
         self::$action_params = array_merge(self::$action_params,
                                            $ret['extra_params']);
