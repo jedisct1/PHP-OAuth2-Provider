@@ -218,7 +218,7 @@ class Route {
             return FALSE;
         }
         $content_type = (string) $_SERVER['CONTENT_TYPE'];
-        if (preg_match('~/json$~', $content_type) <= 0) {
+        if (preg_match('~/json($|\\s*;)~', $content_type) <= 0) {
             return FALSE;
         }
         $json_data = file_get_contents("php://input");
