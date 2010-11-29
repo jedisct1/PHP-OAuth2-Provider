@@ -55,10 +55,10 @@ class ApiMOAuthHelper {
                          'error_message' => 'Form check mismatch');
         }
         if (empty($user_name)) {
-            $flash['user_name'] = 'Nom d\'utilisateur manquant';
+            $flash['user_name'] = 'Missing username';
         }
         if (empty($user_password)) {
-            $flash['user_password'] = 'Mot de passe manquant';
+            $flash['user_password'] = 'Missing password';
         }
         if (!empty($flash)) {
             return self::_get_form($obj_smarty, $user_name, $user_password, $flash,
@@ -75,7 +75,7 @@ class ApiMOAuthHelper {
             }
         } catch (\Exception $e) { }
         if (empty($user_id) || empty($user_name)) {
-            $flash['form'] = _('Nom d\'utilisateur ou mot de passe incorrect');
+            $flash['form'] = 'The username or password is incorrect';
 
             return self::_get_form($obj_smarty, $user_name, $user_password, $flash,
                                    $redirect_uri, $client_id, $facebook_login_uri,
