@@ -67,7 +67,7 @@ class ApiMOAuthHelper {
         }
         $user_id = NULL;
         try {
-            if (Auth::connect_with_skyrock_account($user_name, $user_password) === TRUE) {
+            if (Auth::connect_with_local_account($user_name, $user_password) === TRUE) {
                 $user_id = Auth::get_user_id();
                 $user_name_ = Auth::get_user_name();
                 assert(strcasecmp($user_name_, $user_name) === 0);
