@@ -96,10 +96,8 @@ class GenericUtils {
             exit;
         }
         echo
-          '<script type="text/javascript">' . "\n" .
-          '// <![CDATA[' . "\n" .
+          '<script>' . "\n" .
           'window.location.href = "' . addslashes($uri) . '";' . "\n" .
-          '// ]]>' . "\n" .
           '</script>' . "\n";
         exit;
     }

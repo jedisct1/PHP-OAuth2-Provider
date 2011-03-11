@@ -354,7 +354,7 @@ class Route {
     static function strip_slashes_from_user_data(&$array) {
         foreach($array as $k => $v) {
             if (is_array($v)) {
-                strip_slashes_from_user_data($array[$k]);
+                self::strip_slashes_from_user_data($array[$k]);
                 continue;
             }
             $array[$k] = stripslashes($v);
